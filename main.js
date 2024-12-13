@@ -1,4 +1,4 @@
-import * as THREE from './node_modules/three/build/three.module';
+import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import { gsap } from 'gsap'; 
 
