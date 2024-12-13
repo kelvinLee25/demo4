@@ -1,5 +1,5 @@
-import * as THREE from 'three';
-import { DragControls } from 'three/addons/controls/DragControls.js';
+import * as THREE from '/node_modules/three/build/three.module.js';
+import { DragControls } from '/node_modules/three/examples/jsm/controls/DragControls.js';
 import { gsap } from 'gsap'; 
 
 // Scene setup
