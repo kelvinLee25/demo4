@@ -21,7 +21,6 @@ const cartoonModalContents = [
             "Nationality: Argentine"
         ]
     },
-  
     {
         title: "Bruno Fernandes",
         content: "Bruno Fernandes is a Portuguese professional footballer.",
@@ -65,14 +64,12 @@ const modalStyles = `
     .cartoon-modal {
         position: absolute;
         background-color: white;
-        border: 2px solid #333;
-        border-radius: 10px;
-        padding: 20px;
+        border: solid #333;
+        padding: 10px;
         z-index: 1000;
         display: none;
         max-width: 350px;
         width: 100%;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     .cartoon-modal h2 {
         margin-top: 0;
@@ -106,7 +103,6 @@ const styleElement = document.createElement('style');
 styleElement.textContent = modalStyles;
 document.head.appendChild(styleElement);
 
-// Create modal element with more flexible content structure
 const modal = document.createElement('div');
 modal.classList.add('cartoon-modal');
 modal.innerHTML = `
@@ -175,9 +171,9 @@ function createAndPositionSpheres() {
 
         sphere.userData = {
             originalY: sphere.position.y,
-            bouncingSpeed: 1 + Math.random(), // Unique bouncing speed
-            bouncingAmplitude: 20 + Math.random(), // Unique bouncing amplitude
-            phaseOffset: Math.random() * Math.PI * 2 // Unique phase offset
+            bouncingSpeed: 1 + Math.random(), 
+            bouncingAmplitude: 20 + Math.random(), 
+            phaseOffset: Math.random() * Math.PI * 2
         };
 
         scene.add(sphere);
@@ -220,7 +216,6 @@ function createCartoonMeshes(scene, textureLoader) {
         const geometry = new THREE.PlaneGeometry(250, 250);
         const cartoon = new THREE.Mesh(geometry, material);
 
-        cartoon.renderOrder = 1000;  
         cartoon.scale.set(1, 1, 1);
 
         // Use predefined position
@@ -241,10 +236,8 @@ const cartoons = createCartoonMeshes(scene, textureLoader);
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-// Track dragging state
 let isDragging = false;
 
-// Close modal function
 function closeModal() {
     modal.style.display = 'none';
     
@@ -259,7 +252,6 @@ function closeModal() {
                 ease: "power2.inOut"
             });
             
-            // Reset opacity for other cartoons and spheres
             cartoons.forEach(c => {
                 gsap.to(c.material, {
                     opacity: 1,
@@ -423,30 +415,35 @@ function focusOnCartoon(selectedCartoon) {
     });
 }
 
-// Helper function to get image data
-function getImageData(image) {
-    const canvas = document.createElement('canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(image, 0, 0, image.width, image.height);
-    return ctx.getImageData(0, 0, image.width, image.height);
-}
+function onMouseMove(event) {
+    // Only move camera if no cartoon is currently focused
+    const isFocused = cartoons.some(cartoon => cartoon.userData.isFocused);
+    
+    if (!isFocused) {
+        const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 
-function isPixelTransparent(imageData, uv) {
-    const x = Math.floor(uv.x * imageData.width);
-    const y = Math.floor(uv.y * imageData.height);
-    const index = (y * imageData.width + x) * 4 + 3; 
-    return imageData.data[index] < 10; 
-}
-
-// Click event for showing modal
-function onMouseClick(event) {
-    // Prevent modal during drag
-    if (isDragging) {
-        isDragging = false;
-        return;
+        gsap.to(camera.position, {
+            x: mouseX * 10, 
+            y: mouseY * 10,  
+            duration: 0.5,
+            ease: "power1.out"
+        });
     }
+}
+
+
+window.addEventListener('mousemove', onMouseMove, false);
+
+function isValidCartoonClick(intersects) {
+
+    if (intersects.length === 0) return false;
+    const uv = intersects[0].uv;
+    return uv.x >= 0 && uv.x <= 1 && uv.y >= 0 && uv.y <= 1;
+}
+
+function onMouseClick(event) {
+    if (isDragging) return;
 
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -454,19 +451,8 @@ function onMouseClick(event) {
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(cartoons);
 
-    if (intersects.length > 0) {
+    if (isValidCartoonClick(intersects)) {
         const selectedCartoon = intersects[0].object;
-        const uv = intersects[0].uv;
-        const texture = selectedCartoon.material.map;
-        
-        if (texture) {
-            const imageData = getImageData(texture.image);
-            if (isPixelTransparent(imageData, uv)) {
-                return; 
-            }
-        }
-        
-        // Use focus function
         focusOnCartoon(selectedCartoon);
     }
 }
@@ -493,7 +479,6 @@ function handleOutsideClick(event) {
 
 document.addEventListener('click', handleOutsideClick, false);
 
-// Add close button functionality to modal
 const closeButton = modal.querySelector('.close-btn');
 closeButton.addEventListener('click', closeModal);
 
@@ -518,7 +503,7 @@ dragControls.addEventListener('drag', function (event) {
 // Camera positioning
 camera.position.z = 600;
 
-// Responsive handling
+// when zoom
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -527,18 +512,16 @@ function onWindowResize() {
 }
 window.addEventListener('resize', onWindowResize, false);
 
-// Animate loop with unique bouncing spheres
+
 let clock = new THREE.Clock();
 function animate() {
     requestAnimationFrame(animate);
 
-    // Unique bouncing for each sphere
-    spheres.forEach((sphere, index) => {
-        // Unique bouncing motion
+
+    spheres.forEach((sphere) => {
+
         const userData = sphere.userData;
         const elapsedTime = clock.getElapsedTime();
-        
-        // Calculate vertical position with unique parameters
         const verticalOffset = Math.sin(elapsedTime * userData.bouncingSpeed + userData.phaseOffset) 
                                 * userData.bouncingAmplitude;
         
@@ -552,7 +535,6 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Continue button functionality
 document.getElementById('continue-btn').addEventListener('click', function() {
     window.location.href = 'page1.html';
 });

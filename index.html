@@ -85,7 +85,7 @@
             }
         }
         #continue-btn {
-            background: linear-gradient(135deg, #4169e1, #32cd32);
+            background: linear-gradient( hsl(138, 93%, 48%), #32cd32);
             color: white;
             border: none;
             padding: 15px 30px;
@@ -99,13 +99,25 @@
             letter-spacing: 2px;
             pointer-events: auto;  
             position: relative;    
-            z-index: 10;      
-        }
-        #continue-btn:hover {
+            z-index: 10;  
+            animation: 
+            pulse 2s infinite ease-in-out;
+             background-size: 200% 200%;     
+             }
+
+         #continue-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            background: linear-gradient(135deg, #32cd32, #4169e1);
+         }
+
+         @keyframes pulse { 
+            0%, 100% {  
+                transform: scale(1);  
+            }  
+            50% {    
+                transform: scale(1.05);   
+            }
         }
+
     </style>
     <script type="importmap">
         {
@@ -117,12 +129,7 @@
       </script>
 </head>
 <body>
-    <video id="video-background" autoplay loop muted playsinline>
-        <source src="videoplayback.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-
-    <div id="threejs-container">
+     <div id="threejs-container">
         <div id="content-container">
             <h1 class="rainbow-text imaginary">FOOTBALL</h1>
             <h1 class="rainbow-text ones">WORLD</h1>
