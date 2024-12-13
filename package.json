@@ -6,12 +6,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
     "build": "vite build"
+    
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "gh-pages": "^6.2.0",
     "gsap": "^3.12.5",
     "three": "^0.171.0"
   },
