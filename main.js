@@ -1,6 +1,6 @@
-import * as THREE from 'three';
-import { DragControls } from 'three/addons/controls/DragControls.js';
-import { gsap } from 'gsap'; 
+import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
+import { DragControls } from 'https://unpkg.com/three@0.158.0/examples/jsm/controls/DragControls.js';
+import { gsap } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
 
 // Scene setup
 const scene = new THREE.Scene();
