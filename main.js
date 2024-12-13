@@ -1,6 +1,6 @@
-import * as THREE from '/node_modules/three/build/three.module.js';
-import { DragControls } from '/node_modules/three/examples/jsm/controls/DragControls.js';
-import gsap from './node_modules/gsap/index.js';
+import * as THREE from './node_modules/three/build/three.module';
+import { DragControls } from 'three/addons/controls/DragControls.js';
+import { gsap } from 'gsap'; 
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -517,7 +517,7 @@ dragControls.addEventListener('drag', function (event) {
 });
 
 // Camera positioning
-camera.position.z = 500;
+camera.position.z = 600;
 
 // Responsive handling
 function onWindowResize() {
